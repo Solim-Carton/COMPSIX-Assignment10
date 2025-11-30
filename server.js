@@ -10,6 +10,10 @@ const PORT = 3000;
 // Middleware
 app.use(express.json());
 
+//Added 
+const cors = require('cors');
+app.use(cors());
+
 // JWT Authentication Middleware
 function requireAuth(req, res, next) {
     const authHeader = req.headers.authorization;
@@ -65,12 +69,22 @@ app.get('/health', (req, res) => {
     });
 });
 
+// Ready Check
+app.get('/ready', (req, res) => {
+    res.json({
+        status: 'Ready',
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString()
+    })
+})
+
 // Root endpoint
 app.get('/', (req, res) => {
     res.json({
         message: 'Welcome to Task Management API',
         version: '1.0.0',
         endpoints: {
+            ready: '/ready',
             health: '/health',
             register: 'POST /api/register',
             login: 'POST /api/login',
